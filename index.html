@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FFFFFF">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <title>amaïe</title>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -27,11 +32,9 @@
 
         #main-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 500px; gap: 1px; background: #fff; margin-top: 20px; }
         .tile { aspect-ratio: 1/1; background: #fcfcfc; cursor: pointer; overflow: hidden; }
-        /* Use transform: translateZ(0) to trigger hardware acceleration */
         .tile img { width: 100%; height: 100%; object-fit: cover; transform: translateZ(0); transition: transform 0.4s ease-out; }
         .tile:active img { transform: scale(1.08) translateZ(0); }
 
-        /* Simplified Overlay for Speed */
         #overlay { position: fixed; inset: 0; background: #fff; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         #view-img { width: 100%; max-width: 420px; border-radius: 12px; display: block; object-fit: contain; }
         .close-btn { position: absolute; top: 30px; right: 30px; font-size: 1.5rem; opacity: 0.2; cursor: pointer; padding: 10px; }
@@ -62,6 +65,15 @@
         const KEY = "1111";
         let logs = JSON.parse(localStorage.getItem('amaie_v3')) || [];
         let rCount = 0;
+
+        // Register Service Worker for Android Installation
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('App ready!'))
+                .catch(err => console.log('Error', err));
+            });
+        }
 
         function resetCheck() {
             rCount++;
@@ -127,5 +139,4 @@
         window.onload = render;
     </script>
 </body>
-    </html>
-        
+</html>
