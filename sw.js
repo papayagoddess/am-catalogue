@@ -3,5 +3,5 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Required for PWA installation
+  // Acts as a dummy listener to allow PWA installation
 });
