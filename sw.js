@@ -1,7 +1,14 @@
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
+self.addEventListener('install', (e) => {
+ e.waitUntil(
+   caches.open('amaie-store').then((cache) => cache.addAll([
+     './index.html',
+     './manifest.json'
+   ]))
+ );
 });
 
-self.addEventListener('fetch', (event) => {
-  // Acts as a dummy listener to allow PWA installation
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => response || fetch(e.request))
+  );
 });
