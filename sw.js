@@ -1,6 +1,6 @@
 self.addEventListener('install', (e) => {
  e.waitUntil(
-   caches.open('amaie-store').then((cache) => cache.addAll([
+   caches.open('amaie-v3').then((cache) => cache.addAll([
      './index.html',
      './manifest.json'
    ]))
