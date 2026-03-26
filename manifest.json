@@ -1,12 +1,23 @@
+{
+  "name": "amaïe",
+  "short_name": "amaïe",
+  "start_url": "/am-catalogue/index.html",
+  "scope": "/am-catalogue/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFB7C5",
   "icons": [
     {
       "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
+}
