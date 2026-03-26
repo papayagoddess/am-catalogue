@@ -5,39 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>amaïe</title>
     <style>
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         :root { --white: #FFFFFF; --charcoal: #1A1A1A; --spring: #FFB7C5; }
         
-        body { background: var(--white); color: var(--charcoal); font-family: 'Georgia', serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        body { background: var(--white); color: var(--charcoal); font-family: 'Georgia', serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
         
         #profile-header { width: 100%; max-width: 500px; padding: 60px 20px 20px; text-align: center; }
         
-        .avatar-container { width: 70px; height: 70px; border-radius: 50%; background: #f0f0f0; margin: 0 auto 20px; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.05); transition: transform 0.3s ease; }
-        .avatar-container:active { transform: scale(0.95); }
+        .avatar-container { width: 70px; height: 70px; border-radius: 50%; background: #f4f4f4; margin: 0 auto 20px; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.03); }
         .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
         
-        .brand-name { font-size: 1.6rem; letter-spacing: 6px; text-transform: lowercase; font-weight: 200; margin: 0; cursor: pointer; }
-        .handle { font-family: -apple-system, sans-serif; font-size: 0.75rem; font-weight: 600; margin-top: 5px; opacity: 0.6; }
+        .brand-name { font-size: 1.6rem; letter-spacing: 6px; text-transform: lowercase; font-weight: 200; margin-bottom: 5px; cursor: pointer; }
+        .handle { font-family: -apple-system, sans-serif; font-size: 0.75rem; font-weight: 600; opacity: 0.5; margin-bottom: 15px; }
         
-        .stats { display: flex; justify-content: center; gap: 15px; margin: 15px 0; font-family: -apple-system, sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; cursor: pointer; }
+        .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; font-family: -apple-system, sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; cursor: pointer; }
         
-        #audio-btn { font-family: -apple-system, sans-serif; font-size: 0.55rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 8px 15px; border-radius: 20px; background: #fbfbfb; border: 1px solid #eee; display: inline-flex; align-items: center; gap: 8px; }
-        .dot { width: 5px; height: 5px; background: #ccc; border-radius: 50%; }
+        #audio-btn { font-family: -apple-system, sans-serif; font-size: 0.55rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 8px 15px; border-radius: 20px; background: #fafafa; border: 1px solid #eee; display: inline-flex; align-items: center; gap: 8px; }
+        .dot { width: 5px; height: 5px; background: #ddd; border-radius: 50%; }
         .playing { background: var(--spring)!important; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
         #main-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 500px; gap: 1px; background: #fff; margin-top: 20px; }
-        
-        .tile { aspect-ratio: 1/1; background: #fafafa; cursor: pointer; overflow: hidden; position: relative; }
-        .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1); }
-        .tile:active img { transform: scale(1.1); }
+        .tile { aspect-ratio: 1/1; background: #fcfcfc; cursor: pointer; overflow: hidden; }
+        /* Use transform: translateZ(0) to trigger hardware acceleration */
+        .tile img { width: 100%; height: 100%; object-fit: cover; transform: translateZ(0); transition: transform 0.4s ease-out; }
+        .tile:active img { transform: scale(1.08) translateZ(0); }
 
-        #overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.98); z-index:99; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; opacity: 0; transition: opacity 0.3s ease; }
-        #overlay.active { display: flex; opacity: 1; }
-        #overlay img { width:100%; max-width:400px; border-radius:15px; box-shadow: 0 30px 60px rgba(0,0,0,0.12); object-fit: contain; transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        #overlay.active img { transform: scale(1); }
-        
-        .close-btn { position:absolute; top:30px; right:30px; font-size:1.5rem; cursor:pointer; opacity:0.2; padding: 10px; }
+        /* Simplified Overlay for Speed */
+        #overlay { position: fixed; inset: 0; background: #fff; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        #view-img { width: 100%; max-width: 420px; border-radius: 12px; display: block; object-fit: contain; }
+        .close-btn { position: absolute; top: 30px; right: 30px; font-size: 1.5rem; opacity: 0.2; cursor: pointer; padding: 10px; }
+        .del-txt { margin-top: 30px; font-family: -apple-system, sans-serif; font-size: 0.6rem; letter-spacing: 2px; opacity: 0.2; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -57,30 +55,29 @@
     <div id="overlay">
         <span class="close-btn" onclick="closeOverlay()">✕</span>
         <img id="view-img" src="">
-        <p style="font-size:0.6rem; letter-spacing:2px; opacity:0.3; margin-top:30px; cursor:pointer;" onclick="delItem()">REMOVE LOG</p>
+        <p class="del-txt" onclick="delItem()">REMOVE LOG</p>
     </div>
 
     <script>
         const KEY = "1111";
-        let logs = JSON.parse(localStorage.getItem('amaie_logs')) || [];
+        let logs = JSON.parse(localStorage.getItem('amaie_v3')) || [];
         let rCount = 0;
 
         function resetCheck() {
             rCount++;
-            if(rCount > 4) { if(confirm("Clear all data?")) { localStorage.clear(); location.reload(); } rCount = 0; }
+            if(rCount > 4) { if(confirm("Clear data?")) { localStorage.clear(); location.reload(); } rCount = 0; }
         }
 
         function setPic(type) {
             if(prompt("Passcode:") !== KEY) return;
-            const url = prompt("Paste direct image link (Catbox recommended):");
+            const url = prompt("Paste direct image link:");
             if(!url) return;
-            
             if(type === 'pfp') {
                 localStorage.setItem('amaie_pfp', url);
                 loadPFP();
             } else {
                 logs.unshift(url);
-                localStorage.setItem('amaie_logs', JSON.stringify(logs));
+                localStorage.setItem('amaie_v3', JSON.stringify(logs));
                 render();
             }
         }
@@ -92,16 +89,15 @@
 
         function render() {
             const g = document.getElementById('main-grid');
+            if(!g) return;
             g.innerHTML = '';
             logs.forEach((src, i) => {
                 const div = document.createElement('div');
                 div.className = 'tile';
-                div.innerHTML = `<img src="${src}">`;
+                div.innerHTML = `<img src="${src}" loading="lazy">`;
                 div.onclick = () => {
-                    const ov = document.getElementById('overlay');
                     document.getElementById('view-img').src = src;
-                    ov.style.display = 'flex';
-                    setTimeout(() => ov.classList.add('active'), 10);
+                    document.getElementById('overlay').style.display = 'flex';
                     window.selIdx = i;
                 };
                 g.appendChild(div);
@@ -110,16 +106,12 @@
             loadPFP();
         }
 
-        function closeOverlay() {
-            const ov = document.getElementById('overlay');
-            ov.classList.remove('active');
-            setTimeout(() => ov.style.display = 'none', 300);
-        }
+        function closeOverlay() { document.getElementById('overlay').style.display = 'none'; }
 
         function delItem() {
             if(prompt("Passcode:") === KEY) {
                 logs.splice(window.selIdx, 1);
-                localStorage.setItem('amaie_logs', JSON.stringify(logs));
+                localStorage.setItem('amaie_v3', JSON.stringify(logs));
                 closeOverlay();
                 render();
             }
@@ -135,4 +127,5 @@
         window.onload = render;
     </script>
 </body>
-</html>
+    </html>
+        
