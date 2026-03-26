@@ -1,7 +1,7 @@
 {
   "name": "amaïe",
   "short_name": "amaïe",
-  "start_url": "/am-catalogue/index.html",
+  "start_url": "/am-catalogue/",
   "scope": "/am-catalogue/",
   "display": "standalone",
   "background_color": "#FFFFFF",
