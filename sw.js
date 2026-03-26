@@ -1,4 +1,7 @@
-// Service Worker for amaïe
-self.addEventListener('fetch', function(event) {
-    // This allows the app to be installable
+self.addEventListener('install', (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener('fetch', (event) => {
+  // Required for PWA installation
 });
