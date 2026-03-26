@@ -146,6 +146,118 @@
     </script>
 </body>
 </html>
+        .view-close { font-size: 1.1rem; cursor: pointer; opacity: 0.25; padding: 10px; }
+        .view-img { width: 100%; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+        .action-bar { width: 100%; padding: 15px 2px; display: flex; align-items: center; gap: 12px; }
+        .timestamp { margin-left: auto; font-family: -apple-system, sans-serif; font-size: 0.55rem; opacity: 0.25; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <audio id="player" loop><source src="https://files.catbox.moe/h0fc2q.mp3" type="audio/mpeg"></audio>
+    <header id="profile-header">
+        <div class="avatar-container" onclick="updatePFP()" id="main-pfp-box"><span style="opacity:0.1">pg</span></div>
+        <h1 class="brand-name" onclick="adminAccess()">amaïe</h1>
+        <div class="handle">@papayagoddess</div>
+        <div class="stats-row"><span id="log-count">0 LOGS</span><span>4 SEASONS</span><span>2026</span></div>
+        <div id="audio-trigger" onclick="togglePlay()"><div class="dot" id="aud-dot"></div> <span id="aud-txt">Dirty Laundry</span></div>
+    </header>
+    <div id="main-grid"></div>
+    <div id="full-view">
+        <div class="gradient-card">
+            <div class="view-nav"><div class="view-user"><div class="mini-avatar" id="mini-pfp-box"></div><div class="view-handle">papayagoddess</div></div><div class="view-close" onclick="closeView()">✕</div></div>
+            <img class="view-img" id="view-img" src="">
+            <div class="action-bar"><span style="opacity:0.2; cursor:pointer;" onclick="this.style.opacity=1; this.style.color='#ff4b4b'">❤</span><span style="opacity:0.2; cursor:pointer;" onclick="confirmDelete()">🗑</span><span class="timestamp" id="season-stamp"></span></div>
+        </div>
+    </div>
+
+    <script>
+        const PASSCODE = "1111";
+        const SEASONS = ["SPRING", "SUMMER", "AUTUMN", "WINTER"];
+        let logs = JSON.parse(localStorage.getItem('amaie_vFinal')) || [];
+        let currentOpenIndex = null;
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+
+        function applyPFP() {
+            const pfp = localStorage.getItem('amaie_pfp');
+            if(!pfp) return;
+            const imgHtml = `<img src="${pfp}">`;
+            document.getElementById('main-pfp-box').innerHTML = imgHtml;
+            document.getElementById('mini-pfp-box').innerHTML = imgHtml;
+        }
+
+        function extractId(link) {
+            const match = link.match(/[-\w]{25,}/);
+            return match ? match[0] : null;
+        }
+
+        function updatePFP() {
+            if(prompt("Passcode:") === PASSCODE) {
+                const link = prompt("Paste Google Drive Link:");
+                const id = extractId(link);
+                if(id) {
+                    localStorage.setItem('amaie_pfp', `https://googleusercontent.com/profile/picture/3${id}=w400`);
+                    applyPFP();
+                }
+            }
+        }
+
+        function adminAccess() {
+            if(prompt("Passcode:") === PASSCODE) {
+                const link = prompt("Drive Link for Log:");
+                const id = extractId(link);
+                if(id) {
+                    logs.unshift({ url: `https://googleusercontent.com/profile/picture/3${id}=w800` });
+                    localStorage.setItem('amaie_vFinal', JSON.stringify(logs));
+                    renderGrid();
+                }
+            }
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = '';
+            logs.forEach((log, i) => {
+                const card = document.createElement('div');
+                card.className = `photo-card s-${i % 4}`;
+                card.innerHTML = `<img src="${log.url}">`;
+                card.onclick = () => openView(log, i);
+                grid.appendChild(card);
+            });
+            document.getElementById('log-count').innerText = `${logs.length} LOGS`;
+            applyPFP();
+        }
+
+        function openView(log, index) {
+            currentOpenIndex = index;
+            document.getElementById('view-img').src = log.url;
+            document.getElementById('full-view').style.display = 'flex';
+            document.getElementById('season-stamp').innerText = `${SEASONS[index % 4]} 2026`;
+        }
+
+        function confirmDelete() {
+            if(prompt("Passcode:") === PASSCODE) {
+                logs.splice(currentOpenIndex, 1);
+                localStorage.setItem('amaie_vFinal', JSON.stringify(logs));
+                closeView();
+                renderGrid();
+            }
+        }
+
+        function closeView() { document.getElementById('full-view').style.display = 'none'; }
+        function togglePlay() {
+            const p = document.getElementById('player');
+            const d = document.getElementById('aud-dot');
+            if(p.paused) { p.play(); d.classList.add('active'); }
+            else { p.pause(); d.classList.remove('active'); }
+        }
+
+        window.onload = renderGrid;
+    </script>
+</body>
+</html>
     <script>
         const PASSCODE = "1111";
         const SEASONS = ["SPRING", "SUMMER", "AUTUMN", "WINTER"];
