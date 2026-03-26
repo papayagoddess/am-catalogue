@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>amaïe</title>
+    <style>
+        :root { --white: #FFFFFF; --charcoal: #1A1A1A; --spring: #FFB7C5; --summer: #C1E1C1; --autumn: #FFDAB9; --winter: #AEC6CF; }
+        body { background: var(--white); color: var(--charcoal); font-family: 'Georgia', serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+
+        #profile-header { width: 100%; max-width: 600px; padding: 60px 20px 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        
+        .avatar-container { 
+            width: 60px; height: 60px; border-radius: 50%; background: #f9f9f9; margin-bottom: 20px; 
+            cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            border: 0.5px solid rgba(0,0,0,0.05); position: relative;
+        }
+        .avatar-container img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.2); }
+        
+        .brand-name { font-size: 1.5rem; letter-spacing: 7px; text-transform: lowercase; font-weight: 200; margin: 0; cursor: pointer; }
+        .handle { font-family: -apple-system, sans-serif; font-size: 0.8rem; font-weight: 600; margin-top: 6px; opacity: 0.8; }
+        
+        .stats-row { display: flex; justify-content: center; gap: 20px; margin: 15px 0 10px; font-family: -apple-system, sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; }
+
+        #audio-trigger { font-family: -apple-system, sans-serif; font-size: 0.55rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 6px 12px; border-radius: 20px; background: #FAFAFA; border: 0.5px solid #eee; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 25px; }
+        .dot { width: 4px; height: 4px; background: var(--charcoal); border-radius: 50%; }
+        .active { animation: blink 1.5s infinite; background: var(--spring)!important; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        #main-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 600px; gap: 1px; flex-grow: 1; overflow-y: auto; }
+        .photo-card { aspect-ratio: 1 / 1; background: #FAFAFA; overflow: hidden; position: relative; cursor: pointer; }
+        .photo-card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .s-0 { outline: 0.5px solid var(--spring); outline-offset: -0.5px; }
+        .s-1 { outline: 0.5px solid var(--summer); outline-offset: -0.5px; }
+        .s-2 { outline: 0.5px solid var(--autumn); outline-offset: -0.5px; }
+        .s-3 { outline: 0.5px solid var(--winter); outline-offset: -0.5px; }
+
+        #full-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #FFF; z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .gradient-card { width: 70%; max-width: 320px; display: flex; flex-direction: column; }
+        
+        .view-nav { width: 100%; padding: 0 0 12px 0; display: flex; align-items: center; justify-content: space-between; }
+        .view-user { display: flex; align-items: center; gap: 10px; }
+        .mini-avatar { width: 24px; height: 24px; border-radius: 50%; overflow: hidden; background: #eee; }
+        .mini-avatar img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.2); }
+        
+        .view-handle { font-family: -apple-system, sans-serif; font-size: 0.7rem; font-weight: 700; }
+        .view-close { font-size: 1.1rem; cursor: pointer; opacity: 0.25; padding: 10px; }
+        .view-img { width: 100%; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+        .action-bar { width: 100%; padding: 15px 2px; display: flex; align-items: center; gap: 12px; }
+        .timestamp { margin-left: auto; font-family: -apple-system, sans-serif; font-size: 0.55rem; opacity: 0.25; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <audio id="player" loop><source src="https://files.catbox.moe/h0fc2q.mp3" type="audio/mpeg"></audio>
+
+    <header id="profile-header">
+        <div class="avatar-container" onclick="updatePFP()" id="main-pfp-box">
+            <span style="opacity:0.1">pg</span>
+        </div>
+        <h1 class="brand-name" onclick="adminAccess()">amaïe</h1>
+        <div class="handle">@papayagoddess</div>
+        
+        <div class="stats-row">
+            <span id="log-count">0 LOGS</span>
+            <span>4 SEASONS</span>
+            <span>2026</span>
+        </div>
+
+        <div id="audio-trigger" onclick="togglePlay()">
+            <div class="dot" id="aud-dot"></div> <span id="aud-txt">Dirty Laundry</span>
+        </div>
+    </header>
+
+    <div id="main-grid"></div>
+
+    <div id="full-view">
+        <div class="gradient-card">
+            <div class="view-nav">
+                <div class="view-user">
+                    <div class="mini-avatar" id="mini-pfp-box"></div>
+                    <div class="view-handle">papayagoddess</div>
+                </div>
+                <div class="view-close" onclick="closeView()">✕</div>
+            </div>
+            <img class="view-img" id="view-img" src="">
+            <div class="action-bar">
+                <span style="opacity:0.2; cursor:pointer;" onclick="this.style.opacity=1; this.style.color='#ff4b4b'">❤</span>
+                <span style="opacity:0.2; cursor:pointer;" onclick="confirmDelete()">🗑</span>
+                <span class="timestamp" id="season-stamp"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PASSCODE = "1111";
+        const SEASONS = ["SPRING", "SUMMER", "AUTUMN", "WINTER"];
+        let logs = JSON.parse(localStorage.getItem('amaie_vFinal')) || [];
+        let pfpUrl = localStorage.getItem('amaie_pfp') || "";
+        let currentOpenIndex = null;
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        function applyPFP() {
+            if(!pfpUrl) return;
+            const imgHtml = `<img src="${pfpUrl}">`;
+            document.getElementById('main-pfp-box').innerHTML = imgHtml;
+            document.getElementById('mini-pfp-box').innerHTML = imgHtml;
+        }
+
+        function extractId(link) {
+            const match = link.match(/[-\w]{25,}/);
+            return match ? match[0] : null;
+        }
+
+        function updatePFP() {
+            if(prompt("Passcode:") === PASSCODE) {
+                const link = prompt("Paste Google Drive Link:");
+                const id = extractId(link);
+                if(id) {
+                    pfpUrl = `https://googleusercontent.com/profile/picture/3${id}=w400`;
+                    localStorage.setItem('amaie_pfp', pfpUrl);
+                    applyPFP();
+                }
+            }
+        }
+
+        function adminAccess() {
+            if(prompt("Passcode:") === PASSCODE) {
+                const link = prompt("Drive Link for Log:");
+                const id = extractId(link);
+                if(id) {
+                    logs.unshift({ url: `https://googleusercontent.com/profile/picture/3${id}=w800` });
+                    localStorage.setItem('amaie_vFinal', JSON.stringify(logs));
+                    renderGrid();
+                }
+            }
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = '';
+            logs.forEach((log, i) => {
+                const card = document.createElement('div');
+                card.className = `photo-card s-${i % 4}`;
+                card.innerHTML = `<img src="${log.url}">`;
+                card.onclick = () => openView(log, i);
+                grid.appendChild(card);
+            });
+            document.getElementById('log-count').innerText = `${logs.length} LOGS`;
+            applyPFP();
+        }
+
+        function openView(log, index) {
+            currentOpenIndex = index;
+            document.getElementById('view-img').src = log.url;
+            document.getElementById('full-view').style.display = 'flex';
+            const seasonIndex = index % 4;
+            document.getElementById('season-stamp').innerText = `${SEASONS[seasonIndex]} 2026`;
+        }
+
+        function confirmDelete() {
+            if(prompt("Passcode:") === PASSCODE) {
+                logs.splice(currentOpenIndex, 1);
+                localStorage.setItem('amaie_vFinal', JSON.stringify(logs));
+                closeView();
+                renderGrid();
+            }
+        }
+
+        function closeView() { document.getElementById('full-view').style.display = 'none'; }
+        
+        function togglePlay() {
+            const p = document.getElementById('player');
+            const d = document.getElementById('aud-dot');
+            if(p.paused) { p.play(); d.classList.add('active'); }
+            else { p.pause(); d.classList.remove('active'); }
+        }
+
+        window.onload = renderGrid;
+    </script>
+</body>
+  </html>
+  
