@@ -3,36 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="manifest.json">
     <title>amaïe</title>
     <style>
-        * { box-sizing: border-box; }
-        :root { --white: #FFFFFF; --charcoal: #1A1A1A; --spring: #FFB7C5; --summer: #C1E1C1; --autumn: #FFDAB9; --winter: #AEC6CF; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root { --white: #FFFFFF; --charcoal: #1A1A1A; --spring: #FFB7C5; }
         
-        body { background: var(--white); color: var(--charcoal); font-family: 'Georgia', serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--white); color: var(--charcoal); font-family: 'Georgia', serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        #profile-header { width: 100%; max-width: 600px; padding: 60px 20px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        #profile-header { width: 100%; max-width: 500px; padding: 60px 20px 20px; text-align: center; }
         
-        .avatar-container { width: 60px; height: 60px; border-radius: 50%; background: #f9f9f9; margin-bottom: 20px; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 0.5px solid rgba(0,0,0,0.05); }
-        .avatar-container img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .avatar-container { width: 65px; height: 65px; border-radius: 50%; background: #f0f0f0; margin: 0 auto 20px; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.05); }
+        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
         
-        .brand-name { font-size: 1.5rem; letter-spacing: 7px; text-transform: lowercase; font-weight: 200; margin: 0; cursor: pointer; line-height: 1.2; }
-        .handle { font-family: -apple-system, sans-serif; font-size: 0.8rem; font-weight: 600; margin-top: 8px; opacity: 0.8; }
+        .brand-name { font-size: 1.6rem; letter-spacing: 6px; text-transform: lowercase; font-weight: 200; margin: 0; cursor: pointer; }
+        .handle { font-family: -apple-system, sans-serif; font-size: 0.75rem; font-weight: 600; margin-top: 5px; opacity: 0.6; }
         
-        .stats-row { display: flex; justify-content: center; gap: 20px; margin: 15px 0 20px; font-family: -apple-system, sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.4; }
+        .stats { display: flex; justify-content: center; gap: 15px; margin: 15px 0; font-family: -apple-system, sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; }
         
-        #audio-trigger { font-family: -apple-system, sans-serif; font-size: 0.55rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 6px 14px; border-radius: 20px; background: #FAFAFA; border: 0.5px solid #eee; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px; }
-        .dot { width: 4px; height: 4px; background: var(--charcoal); border-radius: 50%; }
-        .active { animation: blink 1.5s infinite; background: var(--spring)!important; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        
-        #main-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 600px; gap: 1px; background: #FFF; flex-grow: 1; }
-        .photo-card { aspect-ratio: 1 / 1; background: #FAFAFA; overflow: hidden; position: relative; cursor: pointer; }
-        .photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        
-        .s-0 { outline: 0.5px solid var(--spring); outline-offset: -0.5px; }
-        .s-1 { outline: 0.5px solid var(--summer); outline-offset: -0.5px; }
+        #audio-btn { font-family: -apple-system, sans-serif; font-size: 0.55rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 8px 15px; border-radius: 20px; background: #fbfbfb; border: 1px solid #eee; display: inline-flex; align-items: center; gap: 8px; }
+        .dot { width: 5px; height: 5px; background: #ccc; border-radius: 50%; }
+        .playing { background: var(--spring)!important; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
+        #main-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 500px; gap: 1px; background: #fff; margin-top: 20px; }
+        .tile { aspect-ratio: 1/1; background: #fafafa; cursor: pointer; overflow: hidden; }
+        .tile img { width: 100%; height: 100%; object-fit: cover; }
+
+        #overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:#fff; z-index:99; display:none; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+        #overlay img { width:100%; max-width:350px; border-radius:15px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        .close-btn { position:absolute; top:30px; right:30px; font-size:1.5rem; cursor:pointer; opacity:0.2; }
+    </style>
+</head>
+<body>
+
+    <audio id="track" loop><source src="https://files.catbox.moe/h0fc2q.mp3" type="audio/mpeg"></audio>
+
+    <header id="profile-header">
+        <div class="avatar-container" onclick="setPic('pfp')" id="pfp-slot">pg</div>
+        <h1 class="brand-name" onclick="resetCheck()">amaïe</h1>
+        <div class="handle">@papayagoddess</div>
+        <div class="stats"><span id="count">0 LOGS</span><span>2026</span></div>
+        <div id="audio-btn" onclick="playMusic()"><div class="dot" id="dot"></div><span>Dirty Laundry</span></div>
+    </header>
+
+    <div id="main-grid"></div>
+
+    <div id="overlay">
+        <span class="close-btn" onclick="this.parentElement.style.display='none'">✕</span>
+        <img id="view-img" src="">
+        <p style="font-size:0.6rem; letter-spacing:2px; opacity:0.3; margin-top:20px;" onclick="delItem()">REMOVE LOG</p>
+    </header>
+
+    <script>
+        const KEY = "1111";
+        let logs = JSON.parse(localStorage.getItem('amaie_logs')) || [];
+        let rCount = 0;
+
+        function resetCheck() {
+            rCount++;
+            if(rCount > 4) { if(confirm("Clear all data?")) { localStorage.clear(); location.reload(); } rCount = 0; }
+        }
+
+        function setPic(type) {
+            if(prompt("Passcode:") !== KEY) return;
+            const url = prompt("Paste direct image link (Catbox):");
+            if(!url) return;
+            
+            if(type === 'pfp') {
+                localStorage.setItem('amaie_pfp', url);
+                loadPFP();
+            } else {
+                logs.unshift(url);
+                localStorage.setItem('amaie_logs', JSON.stringify(logs));
+                render();
+            }
+        }
+
+        function loadPFP() {
+            const p = localStorage.getItem('amaie_pfp');
+            if(p) document.getElementById('pfp-slot').innerHTML = `<img src="${p}">`;
+        }
+
+        function render() {
+            const g = document.getElementById('main-grid');
+            g.innerHTML = '';
+            logs.forEach((src, i) => {
+                const div = document.createElement('div');
+                div.className = 'tile';
+                div.innerHTML = `<img src="${src}">`;
+                div.onclick = () => {
+                    document.getElementById('view-img').src = src;
+                    document.getElementById('overlay').style.display = 'flex';
+                    window.selIdx = i;
+                };
+                g.appendChild(div);
+            });
+            document.getElementById('count').innerText = `${logs.length} LOGS`;
+            loadPFP();
+        }
+
+        function delItem() {
+            if(prompt("Passcode:") === KEY) {
+                logs.splice(window.selIdx, 1);
+                localStorage.setItem('amaie_logs', JSON.stringify(logs));
+                document.getElementById('overlay').style.display = 'none';
+                render();
+            }
+        }
+
+        function playMusic() {
+            const a = document.getElementById('track');
+            const d = document.getElementById('dot');
+            if(a.paused) { a.play(); d.classList.add('playing'); }
+            else { a.pause(); d.classList.remove('playing'); }
+        }
+
+        // Tap the "0 LOGS" text to add a new photo
+        document.getElementById('count').onclick = () => setPic('log');
+
+        window.onload = render;
+    </script>
+</body>
+    </html>
+            
         
