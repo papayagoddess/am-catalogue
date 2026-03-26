@@ -12,29 +12,21 @@
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         :root { --white: #FFFFFF; --charcoal: #1A1A1A; --spring: #FFB7C5; }
-        
         body { background: var(--white); color: var(--charcoal); font-family: 'Georgia', serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        
         #profile-header { width: 100%; max-width: 500px; padding: 60px 20px 20px; text-align: center; }
-        
         .avatar-container { width: 70px; height: 70px; border-radius: 50%; background: #f4f4f4; margin: 0 auto 20px; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(0,0,0,0.03); }
         .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
-        
         .brand-name { font-size: 1.6rem; letter-spacing: 6px; text-transform: lowercase; font-weight: 200; margin-bottom: 5px; cursor: pointer; }
         .handle { font-family: -apple-system, sans-serif; font-size: 0.75rem; font-weight: 600; opacity: 0.5; margin-bottom: 15px; }
-        
         .stats { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; font-family: -apple-system, sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; cursor: pointer; }
-        
         #audio-btn { font-family: -apple-system, sans-serif; font-size: 0.55rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; padding: 8px 15px; border-radius: 20px; background: #fafafa; border: 1px solid #eee; display: inline-flex; align-items: center; gap: 8px; }
         .dot { width: 5px; height: 5px; background: #ddd; border-radius: 50%; }
         .playing { background: var(--spring)!important; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
         #main-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; max-width: 500px; gap: 1px; background: #fff; margin-top: 20px; }
         .tile { aspect-ratio: 1/1; background: #fcfcfc; cursor: pointer; overflow: hidden; }
         .tile img { width: 100%; height: 100%; object-fit: cover; transform: translateZ(0); transition: transform 0.4s ease-out; }
         .tile:active img { transform: scale(1.08) translateZ(0); }
-
         #overlay { position: fixed; inset: 0; background: #fff; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         #view-img { width: 100%; max-width: 420px; border-radius: 12px; display: block; object-fit: contain; }
         .close-btn { position: absolute; top: 30px; right: 30px; font-size: 1.5rem; opacity: 0.2; cursor: pointer; padding: 10px; }
@@ -42,9 +34,7 @@
     </style>
 </head>
 <body>
-
     <audio id="track" loop><source src="https://files.catbox.moe/h0fc2q.mp3" type="audio/mpeg"></audio>
-
     <header id="profile-header">
         <div class="avatar-container" onclick="setPic('pfp')" id="pfp-slot">pg</div>
         <h1 class="brand-name" onclick="resetCheck()">amaïe</h1>
@@ -52,26 +42,21 @@
         <div class="stats" onclick="setPic('log')"><span id="count">0 LOGS</span><span>2026</span></div>
         <div id="audio-btn" onclick="playMusic()"><div class="dot" id="dot"></div><span>Dirty Laundry</span></div>
     </header>
-
     <div id="main-grid"></div>
-
     <div id="overlay">
         <span class="close-btn" onclick="closeOverlay()">✕</span>
         <img id="view-img" src="">
         <p class="del-txt" onclick="delItem()">REMOVE LOG</p>
     </div>
-
     <script>
         const KEY = "1111";
         let logs = JSON.parse(localStorage.getItem('amaie_v3')) || [];
         let rCount = 0;
 
-        // Register Service Worker for Android Installation
+        // Register Service Worker for Android PWA Support
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('App ready!'))
-                .catch(err => console.log('Error', err));
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
             });
         }
 
@@ -119,7 +104,6 @@
         }
 
         function closeOverlay() { document.getElementById('overlay').style.display = 'none'; }
-
         function delItem() {
             if(prompt("Passcode:") === KEY) {
                 logs.splice(window.selIdx, 1);
@@ -128,15 +112,14 @@
                 render();
             }
         }
-
         function playMusic() {
             const a = document.getElementById('track');
             const d = document.getElementById('dot');
             if(a.paused) { a.play(); d.classList.add('playing'); }
             else { a.pause(); d.classList.remove('playing'); }
         }
-
         window.onload = render;
     </script>
 </body>
-</html>
+    </html>
+    
