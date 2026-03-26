@@ -3,15 +3,20 @@
   "name": "amaïe profile",
   "icons": [
     {
-      "src": "https://files.catbox.moe/h0fc2q.mp3",
+      "src": "https://files.catbox.moe/ag2ur7.png",
       "type": "image/png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "https://files.catbox.moe/ag2ur7.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ],
-  "start_url": "index.html",
-  "background_color": "#FFFFFF",
+  "start_url": "./index.html",
   "display": "standalone",
-  "scope": "./",
+  "background_color": "#FFFFFF",
   "theme_color": "#FFFFFF"
 }
